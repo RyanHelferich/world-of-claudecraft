@@ -530,7 +530,7 @@
     min-width: 0;
     max-width: 520px;
   }
-  #target-frame { left: 12px; top: 12px; display: none; z-index: 6; }
+  #target-frame { left: 12px; top: 12px; display: none; z-index: 6; transform: scale(var(--ui-scale, 1)); transform-origin: top left; }
   .portrait-wrap { position: relative; width: 64px; height: 64px; z-index: 2; }
   .portrait {
     width: 60px; height: 60px; border-radius: 50%;
@@ -618,7 +618,7 @@
   .combo-pip.on { background: radial-gradient(circle at 35% 30%, #ff7a5e, #c0392b); box-shadow: 0 0 5px #ff5533aa; border-color: #ffad99; }
 
   /* ---------- buff bar ---------- */
-  #buff-bar { position: absolute; right: 196px; top: 14px; display: flex; flex-direction: row-reverse; flex-wrap: wrap; gap: 4px; max-width: 320px; pointer-events: auto; }
+  #buff-bar { position: absolute; right: 196px; top: 14px; display: flex; flex-direction: row-reverse; flex-wrap: wrap; gap: 4px; max-width: 320px; pointer-events: auto; transform: scale(var(--ui-scale, 1)); transform-origin: top right; }
   .buff { width: 28px; height: 28px; border: 1px solid var(--color-buff); border-radius: 4px;
     position: relative; cursor: default; background-color: #10141c;
     background-size: cover; background-position: center; background-repeat: no-repeat; }
@@ -626,7 +626,7 @@
   .buff .dur { position: absolute; bottom: -13px; left: 0; right: 0; text-align: center; font-size: 9px; color: #eee; text-shadow: 1px 1px 1px #000; }
 
   /* ---------- cast bar ---------- */
-  #castbar { position: absolute; left: 50%; transform: translateX(-50%); bottom: 200px; width: 300px;
+  #castbar { position: absolute; left: 0; right: 0; margin: 0 auto; transform: scale(var(--ui-scale, 1)); transform-origin: bottom center; bottom: 200px; width: 300px;
     height: 24px; display: none; border: 2px solid var(--border); outline: 1px solid #000; border-radius: 4px; background: #100c08; overflow: hidden; }
   #castbar .fill { height: 100%; width: 0%; background: linear-gradient(#ffe48a, #c9941a 60%, #9a6f12);
     box-shadow: inset 0 1px 0 #fff5; }
@@ -636,7 +636,7 @@
   #castbar .timer { position: absolute; top: 0; right: 6px; line-height: 21px; font-size: 11px;
     color: #fff; text-shadow: 1px 1px 2px #000; font-family: var(--title-font); font-variant-numeric: tabular-nums; }
   /* swing timer: sits just under the cast bar, steel-on-amber to read as melee */
-  #swingbar { position: absolute; left: 50%; transform: translateX(-50%); bottom: 174px; width: 220px;
+  #swingbar { position: absolute; left: 0; right: 0; margin: 0 auto; transform: scale(var(--ui-scale, 1)); transform-origin: bottom center; bottom: 174px; width: 220px;
     height: 12px; display: none; border: 1px solid var(--border); outline: 1px solid #000; border-radius: 3px;
     background: #0c0a07; overflow: hidden; }
   #swingbar .fill { height: 100%; width: 0%; background: linear-gradient(#ffcf7a, #d97b1e 60%, #8a4a10);
@@ -646,7 +646,7 @@
     color: #fff; text-shadow: 1px 1px 1px #000; font-family: var(--title-font); letter-spacing: .5px; }
 
   /* ---------- bottom cluster ---------- */
-  #bottom-bar { position: absolute; left: 50%; transform: translateX(-50%); bottom: 6px; text-align: center; }
+  #bottom-bar { position: absolute; left: 0; right: 0; margin: 0 auto; width: max-content; transform: scale(var(--ui-scale, 1)); transform-origin: bottom center; bottom: 6px; text-align: center; }
   #xpbar { width: 612px; height: 10px; background: #14101e; border: 1px solid #000; outline: 1px solid #3a3148;
     margin: 0 auto 4px; position: relative; border-radius: 2px; overflow: hidden; }
   #xpbar .fill { height: 100%; width: 0%; background: linear-gradient(#b85eff, #6a1bb0); transition: background .3s; }
@@ -771,7 +771,7 @@
 
   /* ---------- quest tracker ---------- */
   #quest-tracker { position: absolute; right: 14px; top: 262px; width: 240px; font-size: 12px;
-    color: var(--gold); text-shadow: 1px 1px 2px #000; pointer-events: none; }
+    color: var(--gold); text-shadow: 1px 1px 2px #000; pointer-events: none; transform: scale(var(--ui-scale, 1)); transform-origin: top right; }
   #quest-tracker .qt-header { font-family: var(--title-font); font-size: 14px; border-bottom: 1px solid #ffd10044; margin-bottom: 4px; padding-bottom: 2px; }
   #quest-tracker .qt-title { font-weight: bold; margin-top: 8px; font-family: var(--title-font); }
   #quest-tracker .qt-obj { color: #e8e0c8; font-size: 11px; margin-left: 8px; }
@@ -809,7 +809,7 @@
   }
 
   /* ---------- minimap ---------- */
-  #minimap-wrap { position: absolute; right: 12px; top: 10px; width: 170px; text-align: center; }
+  #minimap-wrap { position: absolute; right: 12px; top: 10px; width: 170px; text-align: center; transform: scale(var(--ui-scale, 1)); transform-origin: top right; }
   #zone-label { font-size: 13px; color: var(--gold); font-family: var(--title-font); text-shadow: 1px 1px 3px #000; margin-bottom: 3px; letter-spacing: 0.5px; }
   #minimap { border-radius: 50%; border: 4px solid var(--border); outline: 1px solid #000; box-shadow: 0 0 14px #000c, inset 0 0 20px #0008; }
   /* Digital clock pinned to the bottom of the minimap ring, classic-WoW style. */
@@ -860,7 +860,7 @@
   /* Discord/GitHub: bottom-right, directly below the micro-menu, right-aligned with it. */
   /* Discord/GitHub: standalone square buttons matching the micro-menu (no panel
      container) — only the hover border keeps each service's brand colour. */
-  #community-hud { position: absolute; right: 16px; bottom: 14px; display: flex; align-items: center; gap: 4px; z-index: 19; }
+  #community-hud { position: absolute; right: 16px; bottom: 14px; display: flex; align-items: center; gap: 4px; z-index: 19; transform: scale(var(--ui-scale, 1)); transform-origin: bottom right; }
   #community-menu { display: contents; }
   .community-toggle { display: none; }
   .community-tray { display: flex; align-items: center; gap: 4px; }
@@ -883,7 +883,8 @@
      below set only size/look — never position. (Loot is the one exception: it
      pops at the cursor, so openLoot() sets inline left/top + transform:none.) */
   .window { position: absolute; display: none; padding: 12px; z-index: 20;
-    left: 50%; top: 10vh; transform: translateX(-50%);
+    left: 50%; top: 10vh; transform: translateX(-50%); transform-origin: top left;
+    scale: var(--ui-scale, 1);
     max-height: calc(85vh - 24px); overflow-y: auto; }
   #quest-dialog { width: 440px; }
   .qd-text { font-size: 12.5px; line-height: 1.55; color: #e8e0c8; margin-bottom: 10px; font-family: var(--font-serif); }
@@ -3808,7 +3809,7 @@
     border-radius: 4px; padding: 7px 10px; font-size: 13px; user-select: text; }
 
   /* ---------- party frames ---------- */
-  #party-frames { position: absolute; left: 12px; top: 12px; display: flex; flex-direction: column; gap: 6px; z-index: 5; }
+  #party-frames { position: absolute; left: 12px; top: 12px; display: flex; flex-direction: column; gap: 6px; z-index: 5; transform: scale(var(--ui-scale, 1)); transform-origin: top left; }
   #party-frames.below-target { top: 96px; }
   .party-frame { --cls: #7fb8ff; width: 170px; padding: 4px 8px 5px; cursor: var(--cursor-point);
     transition: opacity 0.2s ease, box-shadow 0.2s ease; }
@@ -4879,7 +4880,7 @@
     font-size: 10px;
   }
   body.mobile-touch #buff-bar { right: max(10px, env(safe-area-inset-right)); top: max(140px, env(safe-area-inset-top)); max-width: 180px; }
-  body.mobile-touch #minimap-wrap { right: max(8px, env(safe-area-inset-right)); top: max(8px, env(safe-area-inset-top)); transform: scale(0.72); transform-origin: right top; }
+  body.mobile-touch #minimap-wrap { right: max(8px, env(safe-area-inset-right)); top: max(8px, env(safe-area-inset-top)); transform: scale(calc(0.72 * var(--ui-scale, 1))); transform-origin: right top; }
   body.mobile-touch #quest-tracker { right: max(10px, env(safe-area-inset-right)); top: max(150px, env(safe-area-inset-top)); width: 190px; font-size: 11px; }
   body.mobile-touch #meters-window {
     position: fixed;

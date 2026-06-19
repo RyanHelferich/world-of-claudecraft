@@ -796,6 +796,7 @@ export const ru_RU: EnTranslations = {
       "clickToMove": "Движение по щелчку",
       "graphicsNote": "Уменьшите скорость камеры для более спокойного обзора мышью. Качество рендера ниже 100% повышает FPS на слабых устройствах.",
       "fieldOfView": "Поле зрения",
+      "uiScale": "UI Scale",
       "hudOpacity": "Прозрачность интерфейса",
       "tooltipScale": "Размер текста подсказок",
       "fctScale": "Размер боевого текста",

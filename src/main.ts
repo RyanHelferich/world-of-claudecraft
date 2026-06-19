@@ -798,6 +798,7 @@ async function startGame(world: IWorld, offlineSim: Sim | null, online: ClientWo
       case 'chatOpacity': document.documentElement.style.setProperty('--chat-opacity', String(v)); break;
       case 'fctScale': document.documentElement.style.setProperty('--fct-scale', String(v)); break;
       case 'hudOpacity': document.documentElement.style.setProperty('--hud-opacity', String(v)); break;
+      case 'uiScale': document.documentElement.style.setProperty('--ui-scale', String(v)); break;
     }
   }
   // apply persisted settings to the freshly-built subsystems

@@ -796,6 +796,7 @@ export const de_DE: EnTranslations = {
       "clickToMove": "Klicken zum Bewegen",
       "graphicsNote": "Senkt die Kamerageschwindigkeit für ruhigere Maussteuerung. Renderqualität unter 100 % verbessert die FPS auf schwächeren Geräten.",
       "fieldOfView": "Sichtfeld",
+      "uiScale": "UI Scale",
       "hudOpacity": "HUD-Deckkraft",
       "tooltipScale": "Tooltip-Textgröße",
       "fctScale": "Kampftextgröße",

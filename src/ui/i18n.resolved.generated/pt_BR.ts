@@ -796,6 +796,7 @@ export const pt_BR: EnTranslations = {
       "clickToMove": "Clique para mover",
       "graphicsNote": "Reduza a velocidade da câmera para um mouselook mais calmo. Qualidade de renderização abaixo de 100% melhora o FPS em máquinas mais fracas.",
       "fieldOfView": "Campo de visão",
+      "uiScale": "UI Scale",
       "hudOpacity": "Opacidade do HUD",
       "tooltipScale": "Tamanho do texto das dicas",
       "fctScale": "Tamanho do texto de combate",

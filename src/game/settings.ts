@@ -76,6 +76,10 @@ export const SETTING_RANGES = {
   // Fades the HUD panels & windows as a whole; lets players see more of the
   // world behind their frames without hiding them entirely.
   hudOpacity: { min: 0.5, max: 1, def: 1 },
+  // Scales the entire game HUD uniformly (action bar, unit frames, minimap,
+  // windows, etc.) so players on large or high-DPI monitors can enlarge the
+  // UI without changing OS resolution. Default 1.0 = original size.
+  uiScale: { min: 0.7, max: 2.0, def: 1 },
 } as const;
 
 export const BOOL_SETTINGS = {

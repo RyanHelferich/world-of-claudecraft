@@ -796,6 +796,7 @@ export const zh_CN: EnTranslations = {
       "clickToMove": "点击移动",
       "graphicsNote": "降低镜头速度可让鼠标视角更平稳。渲染质量低于 100% 可在较弱设备上提升 FPS。",
       "fieldOfView": "视野",
+      "uiScale": "UI Scale",
       "hudOpacity": "界面不透明度",
       "tooltipScale": "提示文字大小",
       "fctScale": "战斗文字大小",

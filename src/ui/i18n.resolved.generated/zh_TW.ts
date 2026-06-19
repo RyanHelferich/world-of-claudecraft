@@ -796,6 +796,7 @@ export const zh_TW: EnTranslations = {
       "clickToMove": "點擊移動",
       "graphicsNote": "降低鏡頭速度可讓滑鼠視角更平穩。渲染品質低於 100% 可在較弱裝置上提升 FPS。",
       "fieldOfView": "視野範圍",
+      "uiScale": "UI Scale",
       "hudOpacity": "HUD 透明度",
       "tooltipScale": "提示文字大小",
       "fctScale": "戰鬥文字大小",

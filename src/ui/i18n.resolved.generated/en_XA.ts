@@ -796,6 +796,7 @@ export const en_XA: EnTranslations = {
       "clickToMove": "[Çļíçķ ţó Ɱóʋé]",
       "graphicsNote": "[Ļóŵéŕ Çáɱéŕá Šþééð ƒóŕ á çáļɱéŕ ɱóúšéļóóķ. Ŕéñðéŕ Ɋúáļíţý ƀéļóŵ 100% ƀóóšţš ƑÞŠ óñ ŵéáķéŕ ɱáçĥíñéš.]",
       "fieldOfView": "[Ƒíéļð óƒ Ʋíéŵ]",
+      "uiScale": "[ÚÍ Šçáļé]",
       "hudOpacity": "[ĤÚÐ Óþáçíţý]",
       "tooltipScale": "[Ţóóļţíþ Ţéẋţ Šížé]",
       "fctScale": "[Çóɱƀáţ Ţéẋţ Šížé]",

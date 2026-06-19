@@ -796,6 +796,7 @@ export const ko_KR: EnTranslations = {
       "clickToMove": "클릭하여 이동",
       "graphicsNote": "카메라 속도를 낮추면 마우스 시점이 더 안정됩니다. 렌더 품질을 100% 아래로 낮추면 낮은 사양 장치에서 FPS가 향상됩니다.",
       "fieldOfView": "시야각",
+      "uiScale": "UI Scale",
       "hudOpacity": "HUD 투명도",
       "tooltipScale": "툴팁 글자 크기",
       "fctScale": "전투 문자 크기",

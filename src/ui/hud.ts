@@ -7673,6 +7673,7 @@ export class Hud {
   // it touches the simulation.
   private renderInterface(): void {
     const body = this.settingsViewShell('Interface');
+    this.settingSlider(body, t('hud.options.uiScale'), 'uiScale');
     this.settingSlider(body, t('hud.options.hudOpacity'), 'hudOpacity');
     this.settingSlider(body, t('hud.options.tooltipScale'), 'tooltipScale');
     this.settingSlider(body, t('hud.options.fctScale'), 'fctScale');

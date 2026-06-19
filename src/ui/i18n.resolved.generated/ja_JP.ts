@@ -796,6 +796,7 @@ export const ja_JP: EnTranslations = {
       "clickToMove": "クリック移動",
       "graphicsNote": "カメラ速度を下げるとマウス視点が落ち着きます。描画品質を100%未満にすると、低性能環境でFPSが向上します。",
       "fieldOfView": "視野",
+      "uiScale": "UI Scale",
       "hudOpacity": "HUDの不透明度",
       "tooltipScale": "ツールチップの文字サイズ",
       "fctScale": "戦闘テキストのサイズ",
