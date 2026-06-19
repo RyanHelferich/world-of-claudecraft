@@ -219,15 +219,18 @@ describe('movement directions', () => {
   it('strafing moves along the screen-right vector', () => {
     const sim = makeSim('warrior');
     teleportTo(sim, 0, -40);
-    sim.player.facing = 0; // facing +Z; screen-right is -X
+    // Action camera: the client resets player.facing to the camera yaw before
+    // every tick so the movement reference frame stays fixed while the character
+    // body rotates to face the velocity direction.  Replicate that here.
+    const cameraFacing = 0; // camera facing +Z; screen-right is -X
     const x0 = sim.player.pos.x;
     sim.moveInput.strafeRight = true;
-    for (let i = 0; i < 20; i++) sim.tick();
+    for (let i = 0; i < 20; i++) { sim.player.facing = cameraFacing; sim.tick(); }
     expect(sim.player.pos.x).toBeLessThan(x0);
     sim.moveInput.strafeRight = false;
     sim.moveInput.strafeLeft = true;
     const x1 = sim.player.pos.x;
-    for (let i = 0; i < 20; i++) sim.tick();
+    for (let i = 0; i < 20; i++) { sim.player.facing = cameraFacing; sim.tick(); }
     expect(sim.player.pos.x).toBeGreaterThan(x1);
   });
 

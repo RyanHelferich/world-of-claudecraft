@@ -1064,7 +1064,7 @@ export class GameServer {
         session.lastInputSeq = Math.max(session.lastInputSeq, Math.floor(msg.seq));
       }
       if (facing !== null && !e.dead) {
-        e.facing = facing;
+        meta.cameraYaw = facing;
       }
       return;
     }

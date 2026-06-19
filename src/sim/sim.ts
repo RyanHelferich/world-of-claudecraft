@@ -481,6 +481,10 @@ export interface PlayerMeta {
   // Session-only: name of the last player who whispered us, for "/r" replies.
   // Never persisted — a fresh login starts with no reply target.
   lastWhisperFrom?: string;
+  // Action-camera movement reference. Client writes the camera yaw here each
+  // tick so the sim can compute world-space movement without ever writing to
+  // p.facing from outside. null in headless/RL contexts → falls back to p.facing.
+  cameraYaw: number | null;
 }
 
 // Away-from-keyboard / do-not-disturb presence. `afk` still delivers whispers
@@ -888,6 +892,7 @@ export class Sim {
       loadouts: [],
       activeLoadout: -1,
       away: null,
+      cameraYaw: null,
     };
     this.players.set(player.id, meta);
     player.skinCatalog = meta.skinCatalog;
@@ -1177,6 +1182,12 @@ export class Sim {
   }
   set copper(v: number) {
     this.primary.copper = v;
+  }
+  get cameraYaw(): number | null {
+    return this.primary.cameraYaw;
+  }
+  set cameraYaw(v: number | null) {
+    this.primary.cameraYaw = v;
   }
   get xp(): number {
     return this.primary.xp;
@@ -1960,19 +1971,23 @@ export class Sim {
     const swimming = this.isSwimming(p);
     let wishX = 0, wishZ = 0, wishSpeed = 0;
     if (moving) {
-      if (p.castingAbility) this.cancelCast(p);
+      // Fishing requires you to stay still; other casts continue while moving.
+      if (p.castingAbility === FISHING_CAST_ID) this.cancelCast(p);
       const len = Math.hypot(mx, mz);
       mx /= len; mz /= len;
       let speed = RUN_SPEED * this.moveSpeedMult(p);
-      if (mz < 0) speed *= BACKPEDAL_MULT;
       if (swimming) speed *= SWIM_SPEED_MULT;
-      // world = forward * mz + right * mx, with right = (-cos f, sin f)
-      const sin = Math.sin(p.facing), cos = Math.cos(p.facing);
+      // Use camera yaw as movement reference when available (action camera);
+      // fall back to p.facing in headless/RL/test contexts where cameraYaw is null.
+      const refYaw = meta.cameraYaw ?? p.facing;
+      const sin = Math.sin(refYaw), cos = Math.cos(refYaw);
       const wx = mz * sin - mx * cos;
       const wz = mz * cos + mx * sin;
       wishX = wx;
       wishZ = wz;
       wishSpeed = speed;
+      // action-camera: character faces the direction it is actually moving
+      if (meta.cameraYaw !== null) p.facing = normAngle(Math.atan2(wx, wz));
     }
 
     const movingOnGround = moving && (p.onGround || swimming);

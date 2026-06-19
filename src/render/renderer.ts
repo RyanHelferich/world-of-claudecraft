@@ -174,6 +174,9 @@ interface EntityView {
   stepAccum: number;
   wasAirborne: boolean;
   wasSwimming: boolean;
+  // Attack-facing snap: briefly turns the character toward the attack target.
+  attackSnapFacing: number | null;
+  attackSnapTimer: number; // seconds remaining on the snap
 }
 
 function collectCasters(root: THREE.Object3D, into: THREE.Object3D[]): void {
@@ -766,7 +769,20 @@ export class Renderer {
         break;
       case 'damage':
         // every melee/ranged swing animates the attacker for all to see
-        if (ev.school === 'physical' && ev.sourceId !== -1) this.triggerAttack(ev.sourceId);
+        if (ev.school === 'physical' && ev.sourceId !== -1) {
+          this.triggerAttack(ev.sourceId);
+          // Briefly snap the attacker to face the target, then release back to
+          // velocity-driven facing. Only for entities we can compute angles for.
+          const attacker = this.sim.entities.get(ev.sourceId);
+          const target = this.sim.entities.get(ev.targetId);
+          const av = this.views.get(ev.sourceId);
+          if (av && attacker && target) {
+            const dx = target.pos.x - attacker.pos.x;
+            const dz = target.pos.z - attacker.pos.z;
+            av.attackSnapFacing = Math.atan2(dx, dz);
+            av.attackSnapTimer = 0.25;
+          }
+        }
         if (ev.kind === 'hit' && ev.amount > 0) {
           // landed blows flinch the victim (rate-limited inside the visual)
           this.triggerHit(ev.targetId);
@@ -1078,6 +1094,7 @@ export class Renderer {
       lastX: e.pos.x, lastZ: e.pos.z, skin: e.skin, liveScale: e.scale,
       loco: newLocoTrack(),
       stepAccum: 0, wasAirborne: false, wasSwimming: false,
+      attackSnapFacing: null, attackSnapTimer: 0,
     });
   }
 
@@ -1400,6 +1417,12 @@ export class Renderer {
       v.group.position.set(x, y, z);
       let facing = e.prevFacing + shortestAngle(e.prevFacing, e.facing) * ea;
       if (id === p.id && renderFacingOverride !== null) facing = renderFacingOverride;
+      // Attack snap: override facing toward the struck target for a brief window,
+      // then let the timer expire and velocity-driven facing resume.
+      if (v.attackSnapTimer > 0) {
+        v.attackSnapTimer = Math.max(0, v.attackSnapTimer - dt);
+        if (v.attackSnapFacing !== null) facing = v.attackSnapFacing;
+      }
       v.group.rotation.y = facing;
 
       if (e.kind === 'object') {

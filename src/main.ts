@@ -1090,7 +1090,12 @@ async function startGame(world: IWorld, offlineSim: Sim | null, online: ClientWo
     { mi: ReturnType<typeof input.readMoveInput>; facing: number | null } {
     attackMoveTick();
     const mi = input.readMoveInput();
-    let facing: number | null = mouselook ? input.camYaw : null;
+    // Action camera: send camYaw as the movement reference frame whenever the
+    // player is actually moving. The sim uses it as the basis for the world
+    // velocity vector, then overwrites p.facing with the velocity direction.
+    // Idle frames send null so the character holds its last velocity direction.
+    const isMoving = mi.forward || mi.back || mi.strafeLeft || mi.strafeRight;
+    let facing: number | null = isMoving ? input.camYaw : null;
     if (input.clickMoveTarget) {
       if (clickMoveShouldCancel(mi, {
         mouselook,
@@ -1199,10 +1204,9 @@ async function startGame(world: IWorld, offlineSim: Sim | null, online: ClientWo
   }
 
   function renderFacingOverride(): number | null {
-    if (input.isMouseCameraMode()) {
-      return cameraMoveActive() ? input.camYaw : null;
-    }
-    return input.isMouselookActive() && !world.player.dead ? input.camYaw : null;
+    // Action camera: character facing is driven by velocity in the sim, not by
+    // the camera yaw. Let the interpolated entity facing reach the renderer.
+    return null;
   }
 
   function cameraMoveActive(): boolean {
@@ -1244,8 +1248,7 @@ async function startGame(world: IWorld, offlineSim: Sim | null, online: ClientWo
       while (acc >= DT) {
         const { mi, facing } = resolveMove(mouselook, offlineSim.player.pos, offlineSim.player.facing);
         Object.assign(offlineSim.moveInput, mi);
-        const stepFacing = movementFacing ?? facing;
-        if (stepFacing !== null) offlineSim.player.facing = stepFacing;
+        offlineSim.cameraYaw = facing;
         offlineSim.updateFiestaBots(); // dev: steer Fiesta practice bots (no-op unless active)
         perf.markInputSent(performance.now());
         const events = perf.time('sim', () => offlineSim.tick());

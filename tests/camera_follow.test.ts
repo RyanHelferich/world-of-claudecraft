@@ -7,8 +7,9 @@ describe('camera follow', () => {
     expect(wrapAngle(-Math.PI * 1.5)).toBeCloseTo(Math.PI / 2);
   });
 
-  it('animates character turn deltas under the global yaw-speed cap', () => {
-    const next = updateFollowCameraYaw({
+  it('camera yaw is never modified — the action camera never auto-follows character facing', () => {
+    // Non-moving: no settle
+    const noMove = updateFollowCameraYaw({
       camYaw: 1.0,
       interpFacing: 0.4,
       lastInterpFacing: 0.2,
@@ -17,14 +18,11 @@ describe('camera follow', () => {
       moving: false,
       orbiting: false,
     });
-    expect(next.camYaw).toBeGreaterThan(1.0);
-    expect(next.camYaw).toBeLessThan(1.2);
-    expect(next.camYaw).toBeCloseTo(1.06);
-    expect(next.lastInterpFacing).toBe(0.4);
-  });
+    expect(noMove.camYaw).toBe(1.0);
+    expect(noMove.lastInterpFacing).toBe(0.4);
 
-  it('caps automatic yaw movement even after a long frame hitch', () => {
-    const next = updateFollowCameraYaw({
+    // Moving with a facing offset: still no settle
+    const moving = updateFollowCameraYaw({
       camYaw: 0,
       interpFacing: Math.PI,
       lastInterpFacing: 0,
@@ -33,8 +31,8 @@ describe('camera follow', () => {
       moving: true,
       orbiting: false,
     });
-    expect(next.camYaw).toBeGreaterThan(0);
-    expect(next.camYaw).toBeLessThan(0.13);
+    expect(moving.camYaw).toBe(0);
+    expect(moving.lastInterpFacing).toBe(Math.PI);
   });
 
   it('tracks facing through mouselook without changing yaw', () => {
@@ -51,7 +49,7 @@ describe('camera follow', () => {
     expect(next.lastInterpFacing).toBe(0.6);
   });
 
-  it('eases large moving offsets instead of snapping the camera behind the character', () => {
+  it('camera stays fixed even when there is a large angular gap between camYaw and interpFacing', () => {
     const next = updateFollowCameraYaw({
       camYaw: Math.PI,
       interpFacing: 0,
@@ -61,11 +59,10 @@ describe('camera follow', () => {
       moving: true,
       orbiting: false,
     });
-    expect(next.camYaw).toBeLessThan(Math.PI);
-    expect(next.camYaw).toBeGreaterThan(Math.PI - 0.2);
+    expect(next.camYaw).toBe(Math.PI);
   });
 
-  it('settles medium moving offsets quickly but not instantly', () => {
+  it('camera stays fixed for medium facing offsets too', () => {
     const next = updateFollowCameraYaw({
       camYaw: 1.2,
       interpFacing: 0,
@@ -75,9 +72,7 @@ describe('camera follow', () => {
       moving: true,
       orbiting: false,
     });
-    expect(next.camYaw).toBeLessThan(1.2);
-    expect(next.camYaw).toBeGreaterThan(0);
-    expect(next.camYaw).toBeGreaterThan(1.0);
+    expect(next.camYaw).toBe(1.2);
   });
 
   it('does not auto-follow while the camera drives the facing (mouse-camera move)', () => {
@@ -110,7 +105,7 @@ describe('camera follow', () => {
     expect(next.camYaw).toBe(1);
   });
 
-  it('decouples click-to-move turns from the camera and eases only gently', () => {
+  it('camera is unaffected by click-to-move bearing changes', () => {
     const next = updateFollowCameraYaw({
       camYaw: Math.PI,
       interpFacing: 0,
@@ -121,8 +116,7 @@ describe('camera follow', () => {
       clickMoving: true,
       orbiting: false,
     });
-    expect(next.camYaw).toBeLessThan(Math.PI);
-    expect(next.camYaw).toBeGreaterThan(Math.PI - 0.04);
+    expect(next.camYaw).toBe(Math.PI);
   });
 
   it('treats mouse-camera mode as manual control even though mouselook reports false', () => {
@@ -134,35 +128,32 @@ describe('camera follow', () => {
     expect(cameraIsManual(false, false)).toBe(false); // classic, hands off — follow runs
   });
 
-  it('keeps the camera locked to the drag in mouse-camera mode (no follow drift)', () => {
-    // Reproduces the bug: in Mouse Camera mode the player walks forward while
-    // dragging the camera, and the sim locks facing to camYaw every frame. Routed
-    // through the manual flag (cameraIsManual=true) the follow system is bypassed,
-    // so the camera tracks the drag exactly. With the old wiring (mouselook=false)
-    // the follow code fights the drag and the view drifts tens of degrees.
-    const simulate = (manual: boolean): number => {
+  it('camera always tracks drag exactly — both with and without explicit mouselook flag', () => {
+    // Action camera: drag-delta is the sole input that moves camYaw; there is no
+    // auto-follow that could fight the drag. Both paths must return zero drift.
+    const simulate = (mouselook: boolean): number => {
       const dt = 1 / 60;
       const dragPerFrame = 0.03;
       let camYaw = Math.PI;
       let intended = Math.PI;
       let lastInterpFacing: number | null = camYaw;
       for (let f = 0; f < 90; f++) {
-        camYaw += dragPerFrame;        // the player's drag this frame
-        intended += dragPerFrame;      // where the drag actually asked the camera to point
+        camYaw += dragPerFrame;
+        intended += dragPerFrame;
         const next = updateFollowCameraYaw({
           camYaw, interpFacing: camYaw, frameDt: dt, lastInterpFacing,
-          mouselook: manual, moving: true, orbiting: false,
+          mouselook, moving: true, orbiting: false,
         });
         camYaw = next.camYaw;
         lastInterpFacing = next.lastInterpFacing;
       }
       return Math.abs(wrapAngle(camYaw - intended));
     };
-    expect(simulate(true)).toBeCloseTo(0, 6);   // fixed: camera goes exactly where dragged
-    expect(simulate(false)).toBeGreaterThan(0.5); // old wiring: drifts >0.5 rad (~30°+)
+    expect(simulate(true)).toBeCloseTo(0, 6);
+    expect(simulate(false)).toBeCloseTo(0, 6); // no longer drifts — camera is fully decoupled
   });
 
-  it('settles click-to-move turns more softly when the facing jump is large', () => {
+  it('camera yaw is unmodified regardless of click-to-move bearing jump size', () => {
     const large = updateFollowCameraYaw({
       camYaw: Math.PI,
       interpFacing: 0,
@@ -183,8 +174,7 @@ describe('camera follow', () => {
       clickMoving: true,
       orbiting: false,
     });
-    expect(Math.PI - large.camYaw).toBeGreaterThan(0);
-    expect(Math.PI - large.camYaw).toBeLessThan(0.01);
-    expect(0.25 - small.camYaw).toBeGreaterThan(Math.PI - large.camYaw);
+    expect(large.camYaw).toBe(Math.PI);
+    expect(small.camYaw).toBe(0.25);
   });
 });

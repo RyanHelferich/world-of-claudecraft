@@ -68,21 +68,9 @@ function clickMoveSettleScale(absDelta: number): number {
   return CLICK_MOVE_BIG_TURN_FLOOR + (1 - CLICK_MOVE_BIG_TURN_FLOOR) * eased;
 }
 
+// Action camera: camera yaw is owned entirely by the player's mouse input and
+// never auto-corrects toward the character's facing. The follow/settle logic
+// that pulled camYaw toward interpFacing is intentionally removed.
 export function updateFollowCameraYaw(input: CameraFollowInput): CameraFollowResult {
-  let camYaw = input.camYaw;
-  if (!input.mouselook && !input.cameraDriven) {
-    if (input.orbiting) return { camYaw, lastInterpFacing: input.interpFacing };
-    let targetYaw = camYaw;
-    if (input.lastInterpFacing !== null && !input.clickMoving) targetYaw += wrapAngle(input.interpFacing - input.lastInterpFacing);
-    if (input.moving && !input.orbiting) {
-      const delta = wrapAngle(input.interpFacing - targetYaw);
-      const clickMoveScale = input.clickMoving ? clickMoveSettleScale(Math.abs(delta)) : 1;
-      const rate = input.clickMoving ? CLICK_MOVE_SETTLE_RATE * clickMoveScale : SETTLE_RATE;
-      const maxStep = input.clickMoving ? CLICK_MOVE_MAX_SETTLE_STEP * clickMoveScale : MAX_SETTLE_STEP;
-      const step = delta * (1 - Math.exp(-Math.max(0, input.frameDt) * rate));
-      targetYaw += clamp(step, -maxStep, maxStep);
-    }
-    camYaw = stepAngleToward(camYaw, targetYaw, maxAutoYawStep(input.frameDt));
-  }
-  return { camYaw, lastInterpFacing: input.interpFacing };
+  return { camYaw: input.camYaw, lastInterpFacing: input.interpFacing };
 }

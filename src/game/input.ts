@@ -592,25 +592,15 @@ export class Input {
     // Jump is not a WASD key, so it keeps working in Attack Move mode.
     const jump = this.keybinds.codesForAction('jump').some((c) => k.has(c)) || performance.now() <= this.touchJumpUntil;
 
-    if (this.mouseCameraEnabled) {
-      return {
-        forward, back, jump,
-        turnLeft: false,
-        turnRight: false,
-        strafeLeft: held('strafeLeft') || held('turnLeft') || this.touchMove.strafeLeft,
-        strafeRight: held('strafeRight') || held('turnRight') || this.touchMove.strafeRight,
-      };
-    }
-
-    const mouselook = this.isMouselookActive();
-    const aHeld = held('turnLeft');
-    const dHeld = held('turnRight');
+    // Action camera: A/D always strafe regardless of mouselook state; no
+    // keyboard in-place turns. Movement direction is always camera-relative
+    // (camYaw is sent as the reference frame each frame from main.ts).
     return {
       forward, back, jump,
-      strafeLeft: held('strafeLeft') || (mouselook && aHeld) || this.touchMove.strafeLeft,
-      strafeRight: held('strafeRight') || (mouselook && dHeld) || this.touchMove.strafeRight,
-      turnLeft: !mouselook && aHeld,
-      turnRight: !mouselook && dHeld,
+      turnLeft: false,
+      turnRight: false,
+      strafeLeft: held('strafeLeft') || held('turnLeft') || this.touchMove.strafeLeft,
+      strafeRight: held('strafeRight') || held('turnRight') || this.touchMove.strafeRight,
     };
   }
 }
